@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bat Moon Scroll</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #05030f; font-family: system-ui, sans-serif; color: #fff; }
+
+    .scrollElement { height: 400vh; position: relative; }
+
+    .scene {
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+      background: linear-gradient(#2b1650, #7a3b8f 70%, #c0587a);
+    }
+    .scene svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+    .hint {
+      position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+      font-size: 14px; opacity: .7; letter-spacing: .05em;
+    }
+    .btn {
+      position: absolute; bottom: 20px; padding: 6px 12px; font-size: 13px;
+      background: #000; color: #fff; border: 1px solid #888; border-radius: 4px; cursor: pointer;
+    }
+    #works { left: 20px; }
+    #full  { right: 20px; }
+  </style>
+</head>
+<body>
+
+<div class="scrollElement">
+  <div class="scene">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="glow">
+          <stop offset="60%" stop-color="#ffe600" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#ff7a59" stop-opacity="0" />
+        </radialGradient>
+
+        <symbol id="pine" viewBox="0 0 100 200">
+          <polygon points="50,0 80,60 20,60" />
+          <polygon points="50,35 90,105 10,105" />
+          <polygon points="50,75 100,155 0,155" />
+          <rect x="44" y="150" width="12" height="50" />
+        </symbol>
+
+        <g id="batShape">
+          <path d="M0 0 C-6 -8 -14 -8 -20 -2 C-15 -3 -11 -1 -8 3 C-5 1 -3 3 0 6
+                   C3 3 5 1 8 3 C11 -1 15 -3 20 -2 C14 -8 6 -8 0 0Z" />
+        </g>
+      </defs>
+
+      <circle cx="600" cy="320" r="330" fill="url(#glow)" />
+      <circle cx="600" cy="320" r="260" fill="#ffee00" />
+
+      <g fill="#1a0b2e">
+        <use href="#batShape" class="bat" x="520" y="170" />
+        <use href="#batShape" class="bat" x="640" y="200" />
+        <use href="#batShape" class="bat" x="580" y="260" />
+        <use href="#batShape" class="bat" x="700" y="300" />
+      </g>
+
+      <g id="bird" fill="#1a0b2e" opacity="0">
+        <use href="#batShape" transform="translate(300 560) scale(1.6)" />
+      </g>
+
+      <path d="M0 520 L200 450 L330 490 L480 400 L620 470 L780 420 L950 500 L1200 440 L1200 700 L0 700Z" fill="#241048" />
+      <path d="M0 600 Q300 540 600 590 T1200 580 L1200 700 L0 700Z" fill="#6a2f6e" />
+
+      <g fill="#0b0720">
+        <use href="#pine" x="20"  y="260" width="160" height="320" />
+        <use href="#pine" x="-30" y="400" width="110" height="220" />
+        <use href="#pine" x="1030" y="250" width="170" height="340" />
+        <use href="#pine" x="1130" y="400" width="110" height="220" />
+        <use href="#pine" x="240" y="470" width="60"  height="120" />
+        <use href="#pine" x="900" y="480" width="60"  height="120" />
+      </g>
+      <rect y="640" width="1200" height="60" fill="#0b0720" />
+    </svg>
+
+    <button class="btn" id="works">My Works</button>
+    <button class="btn" id="full">Go Fullscreen</button>
+    <div class="hint">↓ Cuộn chuột để con dơi bay ↓</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.fromTo("#bird", { opacity: 1 }, {
+    y: -250,
+    x: 800,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: ".scrollElement",
+      start: "15% top",
+      end: "60% 100%",
+      scrub: 4,
+      onEnter:  () => gsap.to("#bird", { scaleX: 1,  rotation: 0,   transformOrigin: "center" }),
+      onLeave:  () => gsap.to("#bird", { scaleX: -1, rotation: -15, transformOrigin: "center" })
+    }
+  });
+
+  gsap.utils.toArray(".bat").forEach((b, i) => {
+    gsap.to(b, {
+      y: "+=12", x: i % 2 ? "+=20" : "-=20",
+      duration: 2 + i * 0.4, repeat: -1, yoyo: true, ease: "sine.inOut"
+    });
+  });
+
+  document.getElementById("full").addEventListener("click", () => {
+    document.documentElement.requestFullscreen?.();
+  });
+</script>
+</body>
+</html>
